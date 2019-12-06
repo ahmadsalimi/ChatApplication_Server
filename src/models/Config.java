@@ -1,12 +1,15 @@
 package models;
 
+import json.JsonFileReader;
+import logger.LogLevel;
+
 import java.io.FileNotFoundException;
 
 public class Config {
     private static final String configPath = ""; // TODO
     private static Config Instance;
     private final int Port = 12345;
-    private final LogLevel LogLevel = models.LogLevel.Warning;
+    private final LogLevel LogLevel = logger.LogLevel.Warning;
 
     private Config() {
     }
@@ -27,7 +30,7 @@ public class Config {
         return Port;
     }
 
-    public models.LogLevel getLogLevel() {
+    public logger.LogLevel getLogLevel() {
         return LogLevel;
     }
 }
