@@ -9,7 +9,7 @@ public class Config {
     private static final String configPath = ""; // TODO
     private static Config Instance;
     private final int port = 12345;
-    private final LogLevel minLogLevel = LogLevel.Warning;
+    private final LogLevel minLogLevel = LogLevel.Info;
     private final String usersPath = "";
     private final String channelsPath = "";
 

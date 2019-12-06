@@ -1,13 +1,11 @@
 package server;
 
 import exception.BadRequestException;
-import logger.Logger;
 import models.*;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ClientRequestHandler {
     private static final Pattern registerPattern = Pattern.compile("register (\\w+), (\\w+)");
@@ -20,16 +18,14 @@ public class ClientRequestHandler {
     private static final Pattern channelMembersPattern = Pattern.compile("channel members (\\w+)");
     private static final Pattern leavePattern = Pattern.compile("leave (\\w+)");
     private final DataCenter dataCenter;
-    private final Logger logger;
 
-    public ClientRequestHandler(DataCenter dataCenter, Logger logger) {
+    public ClientRequestHandler(DataCenter dataCenter) {
         this.dataCenter = dataCenter;
-        this.logger = logger;
     }
 
     String executeRequest(String request) {
-        Matcher requestMatcher;
         try {
+            Matcher requestMatcher;
             if ((requestMatcher = registerPattern.matcher(request)).find())
             {
                 return register(requestMatcher).toJson();
@@ -66,7 +62,7 @@ public class ClientRequestHandler {
             {
                 return leave(requestMatcher).toJson();
             }
-            return new Response<>(ResponseType.Error, "Unknown request pattern.").toJson();
+            throw new BadRequestException("Unknown request pattern.");
         } catch (BadRequestException e) {
             return new Response<>(ResponseType.Error, e.getMessage()).toJson();
         }

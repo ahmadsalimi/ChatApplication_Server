@@ -19,7 +19,7 @@ public class ServerHandler {
     public ServerHandler(Logger logger) {
         this.logger = logger;
         dataCenter = new DataCenter(logger);
-        clientRequestHandler = new ClientRequestHandler(dataCenter, logger);
+        clientRequestHandler = new ClientRequestHandler(dataCenter);
     }
 
     public void init() {
