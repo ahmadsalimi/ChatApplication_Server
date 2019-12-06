@@ -6,11 +6,12 @@ public class Config {
     private static final String configPath = ""; // TODO
     private static Config Instance;
     private final int Port = 12345;
+    private final LogLevel LogLevel = models.LogLevel.Warning;
 
     private Config() {
     }
 
-    private static Config getInstance() {
+    public static Config getInstance() {
         if (Instance == null) {
             try {
                 JsonFileReader<Config> jsonReader = new JsonFileReader<>(configPath, Config.class);
@@ -24,5 +25,9 @@ public class Config {
 
     public int getPort() {
         return Port;
+    }
+
+    public models.LogLevel getLogLevel() {
+        return LogLevel;
     }
 }
