@@ -137,17 +137,11 @@ public class DataCenter {
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully logged out.");
     }
 
-    public void sendMessage(String authToken, String content) {
-        User user = authenticate(authToken);
-        if (user.getCurrentChannel() == null) {
-            throw new BadRequestException("You aren't in any channel");
-        }
-        Message message = new Message(user, content);
-        user.getCurrentChannel().addMessage(message);
-    }
-
     public void createChannel(String authToken, String channelName) {
         User user = authenticate(authToken);
+        if (user.getCurrentChannel() != null) {
+            throw new BadRequestException("You are in another channel.");
+        }
         Channel channel = new Channel(channelName);
         addChannel(channel);
         user.setCurrentChannel(channel);
@@ -156,12 +150,21 @@ public class DataCenter {
 
     public void joinChannel(String authToken, String channelName) {
         User user = authenticate(authToken);
-        Channel channel = getChannelByName(channelName);
         if (user.getCurrentChannel() != null) {
             throw new BadRequestException("You are in another channel.");
         }
+        Channel channel = getChannelByName(channelName);
         channel.addMember(user);
         user.setCurrentChannel(channel);
+    }
+
+    public void sendMessage(String authToken, String content) {
+        User user = authenticate(authToken);
+        if (user.getCurrentChannel() == null) {
+            throw new BadRequestException("You aren't in any channel");
+        }
+        Message message = new Message(user, content);
+        user.getCurrentChannel().addMessage(message);
     }
 
     public List<String> refresh(String authToken) {
@@ -179,7 +182,7 @@ public class DataCenter {
         if (user.getCurrentChannel() == null) {
             throw new BadRequestException("You aren't in any channel");
         }
-        return user.getCurrentChannel().getMembers().stream().map(User::getUsername).collect(Collectors.toList());
+        return user.getCurrentChannel().getMembersList();
     }
 
     public void leaveChannel(String authToken) {

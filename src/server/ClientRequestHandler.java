@@ -8,15 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClientRequestHandler {
-    private static final Pattern registerPattern = Pattern.compile("^register (\\w+), (\\w+)$");
-    private static final Pattern loginPattern = Pattern.compile("^login (\\w+), (\\w+)$");
-    private static final Pattern createChannelPattern = Pattern.compile("^create channel (\\w+), (.+)$");
-    private static final Pattern joinChannelPattern = Pattern.compile("^join channel (\\w+), (.+)$");
-    private static final Pattern logoutPattern = Pattern.compile("^logout (.+)$");
-    private static final Pattern sendMessagePattern = Pattern.compile("^send (.+), (.+)$");
-    private static final Pattern refreshPattern = Pattern.compile("^refresh (.+)$");
-    private static final Pattern channelMembersPattern = Pattern.compile("^channel members (.+)$");
-    private static final Pattern leavePattern = Pattern.compile("^leave (.+)$");
+    private static final Pattern registerPattern = Pattern.compile("^register\\s+(\\w+)\\s*,\\s*(\\w+)$");
+    private static final Pattern loginPattern = Pattern.compile("^login\\s+(\\w+)\\s*,\\s*(\\w+)$");
+    private static final Pattern createChannelPattern = Pattern.compile("^create\\s+channel\\s+(\\w+)\\s*,\\s*(.+)$");
+    private static final Pattern joinChannelPattern = Pattern.compile("^join\\s+channel\\s+(\\w+)\\s*,\\s*(.+)$");
+    private static final Pattern logoutPattern = Pattern.compile("^logout\\s+(.+)$");
+    private static final Pattern sendMessagePattern = Pattern.compile("^send\\s+(.+)\\s*,\\s*(.+)$");
+    private static final Pattern refreshPattern = Pattern.compile("^refresh\\s+(.+)$");
+    private static final Pattern channelMembersPattern = Pattern.compile("^channel\\s+members\\s+(.+)$");
+    private static final Pattern leavePattern = Pattern.compile("^leave\\s+(.+)$");
     private final DataCenter dataCenter;
 
     public ClientRequestHandler(DataCenter dataCenter) {

@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,7 @@ public class Channel {
     public static final Channel Empty = new Channel("empty");
     private final ArrayList<Message> messages = new ArrayList<>();
     private final String name;
-    private final ArrayList<User> members = new ArrayList<>();
+    private final HashSet<User> members = new HashSet<>();
 
     public Channel(String name) {
         this.name = name;
@@ -27,8 +28,8 @@ public class Channel {
         return name;
     }
 
-    public ArrayList<User> getMembers() {
-        return members;
+    public List<String> getMembersList() {
+        return members.stream().map(User::getUsername).collect(Collectors.toList());
     }
 
     public void removeMember(User user) {
@@ -43,6 +44,6 @@ public class Channel {
         if (messages.size() <= from) {
             return Collections.emptyList();
         }
-        return messages.subList(from, messages.size()).stream().map(message -> message.getSender() + ": " + message.getContent()).collect(Collectors.toList());
+        return messages.subList(from, messages.size()).stream().map(message -> message.getSender().getUsername() + ": " + message.getContent()).collect(Collectors.toList());
     }
 }
