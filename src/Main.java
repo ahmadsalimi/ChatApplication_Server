@@ -8,6 +8,7 @@ public class Main {
         Logger logger = new ConsoleLogger(Config.getInstance().getMinLogLevel());
         ServerHandler serverHandler = new ServerHandler(logger);
         try {
+            serverHandler.init();
             serverHandler.Run();
         } catch (Exception ignored) {
         }

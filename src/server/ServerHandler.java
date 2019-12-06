@@ -10,10 +10,17 @@ import java.net.Socket;
 public class ServerHandler {
     private final Logger logger;
     private ClientRequestHandler clientRequestHandler;
+    private DataCenter dataCenter;
     private ServerSocket serverSocket;
 
     public ServerHandler(Logger logger) {
         this.logger = logger;
+        dataCenter = new DataCenter(logger);
+        clientRequestHandler = new ClientRequestHandler(dataCenter, logger);
+    }
+
+    public void init() {
+        dataCenter.initFromFile();
     }
 
     public void Run() throws Exception {

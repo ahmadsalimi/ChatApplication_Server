@@ -80,12 +80,12 @@ public class DataCenter {
         return onlineUsersByAuthToken.get(authToken);
     }
 
-    public boolean registerUser(User user) {
-        if (!usersByUsername.containsKey(user.getUsername())) {
-            usersByUsername.put(user.getUsername(), user);
-            return true;
+    public void registerUser(User user) {
+        if (usersByUsername.containsKey(user.getUsername())) {
+            throw new IllegalArgumentException("this username is redundant.");
         }
-        return false;
+        usersByUsername.put(user.getUsername(), user);
+        logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully registered.");
     }
 
     public boolean loginUser(User user) {
