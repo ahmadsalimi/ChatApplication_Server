@@ -23,20 +23,26 @@ public class ServerHandler {
     }
 
     public void init() {
+        logger.log(LogLevel.Info, "Initializing...");
         dataCenter.initFromFile();
+        logger.log(LogLevel.Info, "Initialized.");
     }
 
     public void Run() throws Exception {
         try {
             serverSocket = new ServerSocket(Config.getInstance().getPort());
+            logger.log(LogLevel.Info, "Listening on port " + Config.getInstance().getPort());
 
             while (true) {
                 Socket socket = serverSocket.accept();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 Formatter writer = new Formatter(socket.getOutputStream());
-                String response = clientRequestHandler.executeRequest(reader.readLine());
+                String request = reader.readLine();
+                logger.log(LogLevel.Info, "Request from " + socket.getInetAddress() + ": " + request);
+                String response = clientRequestHandler.executeRequest(request);
                 writer.format(response + "\n");
                 writer.flush();
+                logger.log(LogLevel.Info, "Response sent: " + response);
             }
 
         } catch (Exception e) {

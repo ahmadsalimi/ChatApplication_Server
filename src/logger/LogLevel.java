@@ -3,8 +3,7 @@ package logger;
 public enum LogLevel {
     Info(0),
     Warning(1),
-    Error(2),
-    All(3);
+    Error(2);
 
     private final int level;
 
