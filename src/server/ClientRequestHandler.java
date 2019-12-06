@@ -30,11 +30,72 @@ public class ClientRequestHandler {
     }
 
     String getResponseJson(String request) {
-        Matcher matcher;
-        if ((matcher = registerPattern.matcher(request)).find()) {
-            return getRegisterResponse(matcher);
+        Matcher requestMatcher;
+        if ((requestMatcher = registerPattern.matcher(request)).find())
+        {
+            return getRegisterResponse(requestMatcher);
+        }
+        else if ((requestMatcher = loginPattern.matcher(request)).find())
+        {
+            return getLoginResponse(requestMatcher);
+        }
+        else if ((requestMatcher = createChannelPattern.matcher(request)).find())
+        {
+            return getCreateChannelResponse(requestMatcher);
+        }
+        else if ((requestMatcher = joinChannelPattern.matcher(request)).find())
+        {
+            return getJoinChannelResponse(requestMatcher);
+        }
+        else if ((requestMatcher = logoutPattern.matcher(request)).find())
+        {
+            return getLogoutResponse(requestMatcher);
+        }
+        else if ((requestMatcher = sendMessagePattern.matcher(request)).find())
+        {
+            return getSendMessageResponse(requestMatcher);
+        }
+        else if ((requestMatcher = refreshPattern.matcher(request)).find())
+        {
+            return getRefreshResponse(requestMatcher);
+        }
+        else if ((requestMatcher = channelMembersPattern.matcher(request)).find())
+        {
+            return getChannelMembersResponse(requestMatcher);
+        }
+        else if ((requestMatcher = leavePattern.matcher(request)).find())
+        {
+            return getLeaveResponse(requestMatcher);
         }
         return new Response<>(ResponseType.Error, "Unknown request pattern.").toJson();
+    }
+
+    private String getCreateChannelResponse(Matcher requestMatcher) {
+        return null;
+    }
+
+    private String getJoinChannelResponse(Matcher requestMatcher) {
+        return null;
+    }
+
+    private String getLogoutResponse(Matcher requestMatcher) {
+        return null;
+    }
+
+    private String getSendMessageResponse(Matcher requestMatcher) {
+        return null;
+    }
+
+    private String getRefreshResponse(Matcher requestMatcher) {
+        return null;
+    }
+
+    private String getChannelMembersResponse(Matcher requestMatcher) {
+        return null;
+    }
+
+    private String getLeaveResponse(Matcher requestMatcher) {
+        return null;
     }
 
     private String getRegisterResponse(Matcher request) {
@@ -46,5 +107,9 @@ public class ClientRequestHandler {
             logger.log(LogLevel.Error, e.getMessage());
             return new Response<>(ResponseType.Error, e.getMessage()).toJson();
         }
+    }
+
+    private String getLoginResponse(Matcher requestMatcher) {
+        return null;
     }
 }
