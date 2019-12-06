@@ -50,4 +50,9 @@ public class User {
     public void setRefreshIndex(int refreshIndex) {
         this.refreshIndex = refreshIndex;
     }
+
+    @Override
+    public int hashCode() {
+        return username.hashCode();
+    }
 }
