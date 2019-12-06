@@ -35,4 +35,8 @@ public class Channel {
     public boolean removeMember(User user) {
         return members.remove(user);
     }
+
+    public int getLastMessageIndex() {
+        return messages.size() - 1;
+    }
 }

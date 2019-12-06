@@ -4,6 +4,7 @@ import exception.BadRequestException;
 import json.JsonFileReader;
 import logger.LogLevel;
 import logger.Logger;
+import models.AuthTokenGenerator;
 import models.Channel;
 import models.Config;
 import models.User;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class DataCenter {
+    private final AuthTokenGenerator authTokenGenerator = new AuthTokenGenerator();
     private final Logger logger;
     private HashMap<String, User> usersByUsername = new HashMap<>();
     private HashMap<String, User> onlineUsersByAuthToken = new HashMap<>();
@@ -65,12 +67,11 @@ public class DataCenter {
         return channelsByName.get(name);
     }
 
-    public boolean addChannel(Channel channel) {
+    public void addChannel(Channel channel) {
         if (!channelsByName.containsKey(channel.getName())) {
-            channelsByName.put(channel.getName(), channel);
-            return true;
+            throw new BadRequestException("Channel name is not available.");
         }
-        return false;
+        channelsByName.put(channel.getName(), channel);
     }
 
     public User getUserByUsername(String username) {
@@ -83,18 +84,15 @@ public class DataCenter {
 
     public void registerUser(User user) {
         if (usersByUsername.containsKey(user.getUsername())) {
-            throw new BadRequestException("this username is redundant.");
+            throw new BadRequestException("this username is not available.");
         }
         usersByUsername.put(user.getUsername(), user);
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully registered.");
     }
 
-    public boolean loginUser(User user) {
-        if (!onlineUsersByAuthToken.containsKey(user.getAuthToken())) {
-            onlineUsersByAuthToken.put(user.getAuthToken(), user);
-            return true;
-        }
-        return false;
+    public void loginUser(User user) {
+        user.setAuthToken(authTokenGenerator.generateNewToken());
+        onlineUsersByAuthToken.put(user.getAuthToken(), user);
     }
 
     public boolean logoutUser(String authToken) {
@@ -103,5 +101,20 @@ public class DataCenter {
             return true;
         }
         return false;
+    }
+
+    public void authenticate(String authToken) {
+        if (!onlineUsersByAuthToken.containsKey(authToken)) {
+            throw new BadRequestException("Authentication failed!");
+        }
+    }
+
+    public void authenticateLogin(User user, String password) {
+        if (!user.getPassword().equals(password)) {
+            throw new BadRequestException("Wrong password.");
+        }
+        if (user.getAuthToken() != null) {
+            throw new BadRequestException("The user " + user.getUsername() + " is already logged in.");
+        }
     }
 }

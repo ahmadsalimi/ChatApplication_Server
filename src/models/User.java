@@ -35,13 +35,14 @@ public class User {
 
     public void setCurrentChannel(Channel currentChannel) {
         this.currentChannel = currentChannel;
+        this.lastRefreshedIndex = currentChannel.getLastMessageIndex();
     }
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
 
-    public void setLastRefreshedIndex(int lastRefreshedIndex) {
-        this.lastRefreshedIndex = lastRefreshedIndex;
+    public void increaseLastRefreshedIndex() {
+        this.lastRefreshedIndex++;
     }
 }
