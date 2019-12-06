@@ -92,7 +92,7 @@ public class DataCenter {
     }
 
     private User getUserByUsername(String username) {
-        if (!channelsByName.containsKey(username)) {
+        if (!usersByUsername.containsKey(username)) {
             throw new BadRequestException("Username is not valid.");
         }
         return usersByUsername.get(username);
