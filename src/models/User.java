@@ -35,7 +35,7 @@ public class User {
 
     public void setCurrentChannel(Channel currentChannel) {
         this.currentChannel = currentChannel;
-        this.lastRefreshedIndex = currentChannel.getLastMessageIndex();
+        this.lastRefreshedIndex = 0;
     }
 
     public void leaveChannel() {

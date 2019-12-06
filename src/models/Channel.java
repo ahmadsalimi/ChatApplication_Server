@@ -23,10 +23,6 @@ public class Channel {
         members.add(member);
     }
 
-    public ArrayList<Message> getMessages() {
-        return messages;
-    }
-
     public String getName() {
         return name;
     }
@@ -35,8 +31,8 @@ public class Channel {
         return members;
     }
 
-    public boolean removeMember(User user) {
-        return members.remove(user);
+    public void removeMember(User user) {
+        members.remove(user);
     }
 
     public int getLastMessageIndex() {
