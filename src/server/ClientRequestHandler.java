@@ -73,86 +73,47 @@ public class ClientRequestHandler {
     }
 
     private Response<String> register(Matcher request) {
-        User user = new User(request.group(1), request.group(2));
-        dataCenter.registerUser(user);
+        dataCenter.registerUser(request.group(1), request.group(2));
         return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<String> login(Matcher requestMatcher) {
-        User user = dataCenter.getUserByUsername(requestMatcher.group(1));
-        dataCenter.authenticateLogin(user, requestMatcher.group(2));
-        dataCenter.loginUser(user);
-        return new Response<>(ResponseType.AuthToken, user.getAuthToken());
+        String authToken = dataCenter.loginUser(requestMatcher.group(1), requestMatcher.group(2));
+        return new Response<>(ResponseType.AuthToken, authToken);
     }
 
     private Response<String> createChannel(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(2));
-        Channel channel = new Channel(requestMatcher.group(1));
-        dataCenter.addChannel(channel);
-        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
-        user.setCurrentChannel(channel);
-        channel.addMember(user);
+        dataCenter.createChannel(requestMatcher.group(2), requestMatcher.group(1));
         return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<String> joinChannel(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(2));
-        Channel channel = dataCenter.getChannel(requestMatcher.group(1));
-        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
-        if (user.getCurrentChannel() != null) {
-            throw new BadRequestException("You are in another channel.");
-        }
-        channel.addMember(user);
-        user.setCurrentChannel(channel);
+        dataCenter.joinChannel(requestMatcher.group(2), requestMatcher.group(1));
         return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<String> logout(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(1));
         dataCenter.logoutUser(requestMatcher.group(1));
         return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<String> sendMessage(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(2));
-        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
-        if (user.getCurrentChannel() == null) {
-            throw new BadRequestException("You aren't in any channel");
-        }
-        Message message = new Message(user, requestMatcher.group(1));
-        user.getCurrentChannel().addMessage(message);
+        dataCenter.sendMessage(requestMatcher.group(2), requestMatcher.group(1));
         return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<List<String>> refresh(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(1));
-        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
-        if (user.getCurrentChannel() == null) {
-            throw new BadRequestException("You aren't in any channel");
-        }
-        List<String> messages = user.getCurrentChannel().getRefreshedMessages(user.getLastRefreshedIndex() + 1);
-        user.setLastRefreshedIndex(user.getCurrentChannel().getLastMessageIndex());
+        List<String> messages = dataCenter.refresh(requestMatcher.group(1));
         return new Response<>(ResponseType.List, messages);
     }
 
     private Response<List<String>> channelMembers(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(1));
-        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
-        if (user.getCurrentChannel() == null) {
-            throw new BadRequestException("You aren't in any channel");
-        }
-        List<String> members = user.getCurrentChannel().getMembers().stream().map(User::getUsername).collect(Collectors.toList());
+        List<String> members = dataCenter.channelMembers(requestMatcher.group(1));
         return new Response<>(ResponseType.List, members);
     }
 
     private Response<String> leave(Matcher requestMatcher) {
-        dataCenter.authenticate(requestMatcher.group(1));
-        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
-        if (user.getCurrentChannel() == null) {
-            throw new BadRequestException("You aren't in any channel");
-        }
-        user.getCurrentChannel().removeMember(user);
-        user.leaveChannel();
+        dataCenter.leaveChannel(requestMatcher.group(1));
         return new Response<>(ResponseType.Successful, "");
     }
 }
