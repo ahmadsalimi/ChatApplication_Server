@@ -38,6 +38,11 @@ public class User {
         this.lastRefreshedIndex = currentChannel.getLastMessageIndex();
     }
 
+    public void leaveChannel() {
+        this.currentChannel = null;
+        this.lastRefreshedIndex = 0;
+    }
+
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }

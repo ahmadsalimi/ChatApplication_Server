@@ -7,6 +7,7 @@ import models.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ClientRequestHandler {
     private static final Pattern registerPattern = Pattern.compile("register (\\w+), (\\w+)");
@@ -135,10 +136,23 @@ public class ClientRequestHandler {
     }
 
     private Response<List<String>> channelMembers(Matcher requestMatcher) {
-        return null;
+        dataCenter.authenticate(requestMatcher.group(1));
+        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
+        if (user.getCurrentChannel() == null) {
+            throw new BadRequestException("You aren't in any channel");
+        }
+        List<String> members = user.getCurrentChannel().getMembers().stream().map(User::getUsername).collect(Collectors.toList());
+        return new Response<>(ResponseType.List, members);
     }
 
     private Response<String> leave(Matcher requestMatcher) {
-        return null;
+        dataCenter.authenticate(requestMatcher.group(1));
+        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
+        if (user.getCurrentChannel() == null) {
+            throw new BadRequestException("You aren't in any channel");
+        }
+        user.getCurrentChannel().removeMember(user);
+        user.leaveChannel();
+        return new Response<>(ResponseType.Successful, "");
     }
 }
