@@ -99,7 +99,7 @@ public class DataCenter {
     }
 
     private void addChannel(Channel channel) {
-        if (!channelsByName.containsKey(channel.getName())) {
+        if (channelsByName.containsKey(channel.getName())) {
             throw new BadRequestException("Channel name is not available.");
         }
         channelsByName.put(channel.getName(), channel);
