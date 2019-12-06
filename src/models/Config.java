@@ -1,18 +1,25 @@
 package models;
 
+import java.io.FileNotFoundException;
+
 public class Config {
-    private static Config INSTANCE;
+    private static final String configPath = ""; // TODO
+    private static Config Instance;
     private final int Port = 12345;
 
     private Config() {
-        // TODO: read from config file
     }
 
     private static Config getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Config();
+        if (Instance == null) {
+            try {
+                JsonFileReader<Config> jsonReader = new JsonFileReader<>(configPath, Config.class);
+                Instance = jsonReader.read();
+            } catch (FileNotFoundException e) {
+                Instance = new Config();
+            }
         }
-        return INSTANCE;
+        return Instance;
     }
 
     public int getPort() {
