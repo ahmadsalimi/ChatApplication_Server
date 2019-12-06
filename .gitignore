@@ -99,3 +99,6 @@ fabric.properties
 # .iml
 .idea/*
 ChatApplication_Server.iml
+
+# manifest
+**/*.MF
