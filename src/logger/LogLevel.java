@@ -1,4 +1,4 @@
-package models;
+package logger;
 
 public enum LogLevel {
     Info(0),
