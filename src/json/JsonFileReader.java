@@ -6,17 +6,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class JsonFileReader<T> {
+public class JsonFileReader {
     private final Gson gson = new Gson();
-    private final String filePath;
-    private final Class<T> classOfT;
 
-    public JsonFileReader(String filePath, Class<T> classOfT) {
-        this.filePath = filePath;
-        this.classOfT = classOfT;
+    public <T> T read(File file, Class<T> classOfT) throws FileNotFoundException {
+        return gson.fromJson(new FileReader(file), classOfT);
     }
 
-    public T read() throws FileNotFoundException {
-        return gson.fromJson(new FileReader(new File(filePath)), classOfT);
+    public <T> T read(String filePath, Class<T> classOfT) throws FileNotFoundException {
+        return read(new File(filePath), classOfT);
     }
 }
