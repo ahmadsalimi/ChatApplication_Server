@@ -1,5 +1,6 @@
 package server;
 
+import exception.BadRequestException;
 import json.JsonFileReader;
 import logger.LogLevel;
 import logger.Logger;
@@ -82,7 +83,7 @@ public class DataCenter {
 
     public void registerUser(User user) {
         if (usersByUsername.containsKey(user.getUsername())) {
-            throw new IllegalArgumentException("this username is redundant.");
+            throw new BadRequestException("this username is redundant.");
         }
         usersByUsername.put(user.getUsername(), user);
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully registered.");

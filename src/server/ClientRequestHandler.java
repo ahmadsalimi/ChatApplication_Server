@@ -1,12 +1,14 @@
 package server;
 
-import com.google.gson.Gson;
+import exception.BadRequestException;
 import logger.LogLevel;
 import logger.Logger;
+import models.AuthTokenGenerator;
 import models.Response;
 import models.ResponseType;
 import models.User;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ public class ClientRequestHandler {
     private static final Pattern refreshPattern = Pattern.compile("refresh (\\w+)");
     private static final Pattern channelMembersPattern = Pattern.compile("channel members (\\w+)");
     private static final Pattern leavePattern = Pattern.compile("leave (\\w+)");
+    private final AuthTokenGenerator authTokenGenerator = new AuthTokenGenerator();
     private final DataCenter dataCenter;
     private final Logger logger;
 
@@ -30,85 +33,97 @@ public class ClientRequestHandler {
 
     String executeRequest(String request) {
         Matcher requestMatcher;
-        if ((requestMatcher = registerPattern.matcher(request)).find())
-        {
-            return getRegisterResponse(requestMatcher);
-        }
-        else if ((requestMatcher = loginPattern.matcher(request)).find())
-        {
-            return getLoginResponse(requestMatcher);
-        }
-        else if ((requestMatcher = createChannelPattern.matcher(request)).find())
-        {
-            return getCreateChannelResponse(requestMatcher);
-        }
-        else if ((requestMatcher = joinChannelPattern.matcher(request)).find())
-        {
-            return getJoinChannelResponse(requestMatcher);
-        }
-        else if ((requestMatcher = logoutPattern.matcher(request)).find())
-        {
-            return getLogoutResponse(requestMatcher);
-        }
-        else if ((requestMatcher = sendMessagePattern.matcher(request)).find())
-        {
-            return getSendMessageResponse(requestMatcher);
-        }
-        else if ((requestMatcher = refreshPattern.matcher(request)).find())
-        {
-            return getRefreshResponse(requestMatcher);
-        }
-        else if ((requestMatcher = channelMembersPattern.matcher(request)).find())
-        {
-            return getChannelMembersResponse(requestMatcher);
-        }
-        else if ((requestMatcher = leavePattern.matcher(request)).find())
-        {
-            return getLeaveResponse(requestMatcher);
-        }
-        return new Response<>(ResponseType.Error, "Unknown request pattern.").toJson();
-    }
-
-    private String getRegisterResponse(Matcher request) {
-        User user = new User(request.group(1), request.group(2));
         try {
-            dataCenter.registerUser(user);
-            return new Response<>(ResponseType.Successful, "").toJson();
-        } catch (IllegalArgumentException e) {
+            if ((requestMatcher = registerPattern.matcher(request)).find())
+            {
+                return getRegisterResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = loginPattern.matcher(request)).find())
+            {
+                return getLoginResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = createChannelPattern.matcher(request)).find())
+            {
+                return getCreateChannelResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = joinChannelPattern.matcher(request)).find())
+            {
+                return getJoinChannelResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = logoutPattern.matcher(request)).find())
+            {
+                return getLogoutResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = sendMessagePattern.matcher(request)).find())
+            {
+                return getSendMessageResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = refreshPattern.matcher(request)).find())
+            {
+                return getRefreshResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = channelMembersPattern.matcher(request)).find())
+            {
+                return getChannelMembersResponse(requestMatcher).toJson();
+            }
+            else if ((requestMatcher = leavePattern.matcher(request)).find())
+            {
+                return getLeaveResponse(requestMatcher).toJson();
+            }
+            return new Response<>(ResponseType.Error, "Unknown request pattern.").toJson();
+        } catch (BadRequestException e) {
             logger.log(LogLevel.Error, e.getMessage());
             return new Response<>(ResponseType.Error, e.getMessage()).toJson();
         }
     }
 
-    private String getLoginResponse(Matcher requestMatcher) {
+    private Response<String> getRegisterResponse(Matcher request) {
+        User user = new User(request.group(1), request.group(2));
+        dataCenter.registerUser(user);
+        return new Response<>(ResponseType.Successful, "");
+    }
+
+    private Response<String> getLoginResponse(Matcher requestMatcher) {
+        User user = dataCenter.getUserByUsername(requestMatcher.group(1));
+        if (user == null) {
+            throw new BadRequestException("Username is not valid.");
+        }
+        if (!user.getPassword().equals(requestMatcher.group(2))) {
+            throw new BadRequestException("Wrong password.");
+        }
+        if (user.getAuthToken() != null) {
+            throw new BadRequestException("The user " + user.getUsername() + " is already logged in.");
+        }
+        user.setAuthToken(authTokenGenerator.generateNewToken());
+        dataCenter.loginUser(user);
+        return new Response<>(ResponseType.AuthToken, user.getAuthToken());
+    }
+
+    private Response<String> getCreateChannelResponse(Matcher requestMatcher) {
         return null;
     }
 
-    private String getCreateChannelResponse(Matcher requestMatcher) {
+    private Response<String> getJoinChannelResponse(Matcher requestMatcher) {
         return null;
     }
 
-    private String getJoinChannelResponse(Matcher requestMatcher) {
+    private Response<String> getLogoutResponse(Matcher requestMatcher) {
         return null;
     }
 
-    private String getLogoutResponse(Matcher requestMatcher) {
+    private Response<String> getSendMessageResponse(Matcher requestMatcher) {
         return null;
     }
 
-    private String getSendMessageResponse(Matcher requestMatcher) {
+    private Response<ArrayList<String>> getRefreshResponse(Matcher requestMatcher) {
         return null;
     }
 
-    private String getRefreshResponse(Matcher requestMatcher) {
+    private Response<ArrayList<String>> getChannelMembersResponse(Matcher requestMatcher) {
         return null;
     }
 
-    private String getChannelMembersResponse(Matcher requestMatcher) {
-        return null;
-    }
-
-    private String getLeaveResponse(Matcher requestMatcher) {
+    private Response<String> getLeaveResponse(Matcher requestMatcher) {
         return null;
     }
 }
