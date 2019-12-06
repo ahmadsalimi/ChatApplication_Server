@@ -2,12 +2,14 @@ package server;
 
 import exception.BadRequestException;
 import json.JsonFileReader;
+import json.JsonFileWriter;
 import logger.LogLevel;
 import logger.Logger;
 import models.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +112,7 @@ public class DataCenter {
         if (usersByUsername.containsKey(user.getUsername())) {
             throw new BadRequestException("this username is not available.");
         }
+        saveUserToDatabase(user);
         usersByUsername.put(user.getUsername(), user);
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully registered.");
     }
@@ -186,5 +189,22 @@ public class DataCenter {
         }
         user.getCurrentChannel().removeMember(user);
         user.leaveChannel();
+    }
+
+    private void saveUserToDatabase(User user) {
+        JsonFileWriter writer = new JsonFileWriter();
+        try {
+            writer.write(user, userJsonFileNameGenerator(user.getUsername()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String userJsonFileNameGenerator(String username) {
+        return Config.getInstance().getUsersPath() + "user." + username + ".json";
+    }
+
+    private String channelJsonFileNameGenerator(String channelName) {
+        return Config.getInstance().getChannelsPath() + "channel." + channelName + ".json";
     }
 }
