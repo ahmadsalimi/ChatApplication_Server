@@ -3,12 +3,13 @@ package models;
 import java.util.ArrayList;
 
 public class Channel {
+    public static final Channel Empty = new Channel("empty");
     private final ArrayList<Message> messages = new ArrayList<>();
-    private final String channelName;
+    private final String name;
     private final ArrayList<User> members = new ArrayList<>();
 
-    public Channel(String channelName) {
-        this.channelName = channelName;
+    public Channel(String name) {
+        this.name = name;
     }
 
     public void addMessage(Message message) {
@@ -23,8 +24,8 @@ public class Channel {
         return messages;
     }
 
-    public String getChannelName() {
-        return channelName;
+    public String getName() {
+        return name;
     }
 
     public ArrayList<User> getMembers() {

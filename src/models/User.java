@@ -1,6 +1,7 @@
 package models;
 
 public class User {
+    public static final User Empty = new User("empty", "empty");
     private final String username;
     private final String password;
     private Channel currentChannel;

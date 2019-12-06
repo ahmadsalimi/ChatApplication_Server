@@ -8,8 +8,10 @@ import java.io.FileNotFoundException;
 public class Config {
     private static final String configPath = ""; // TODO
     private static Config Instance;
-    private final int Port = 12345;
-    private final LogLevel LogLevel = logger.LogLevel.Warning;
+    private final int port = 12345;
+    private final LogLevel minLogLevel = LogLevel.Warning;
+    private final String usersPath = "";
+    private final String channelsPath = "";
 
     private Config() {
     }
@@ -17,8 +19,8 @@ public class Config {
     public static Config getInstance() {
         if (Instance == null) {
             try {
-                JsonFileReader<Config> jsonReader = new JsonFileReader<>(configPath, Config.class);
-                Instance = jsonReader.read();
+                JsonFileReader jsonReader = new JsonFileReader();
+                Instance = jsonReader.read(configPath, Config.class);
             } catch (FileNotFoundException e) {
                 Instance = new Config();
             }
@@ -27,10 +29,18 @@ public class Config {
     }
 
     public int getPort() {
-        return Port;
+        return port;
     }
 
-    public logger.LogLevel getLogLevel() {
-        return LogLevel;
+    public LogLevel getMinLogLevel() {
+        return minLogLevel;
+    }
+
+    public String getUsersPath() {
+        return usersPath;
+    }
+
+    public String getChannelsPath() {
+        return channelsPath;
     }
 }
