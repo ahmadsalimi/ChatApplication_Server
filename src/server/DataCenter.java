@@ -104,6 +104,7 @@ public class DataCenter {
         if (channelsByName.containsKey(channel.getName())) {
             throw new BadRequestException("Channel name is not available.");
         }
+        saveChannelToDatabase(channel);
         channelsByName.put(channel.getName(), channel);
         logger.log(LogLevel.Info, "Channel " + channel.getName() + " successfully Created.");
     }
@@ -198,6 +199,16 @@ public class DataCenter {
         JsonFileWriter writer = new JsonFileWriter();
         try {
             writer.write(user, userJsonFileNameGenerator(user.getUsername()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void saveChannelToDatabase(Channel channel) {
+        JsonFileWriter writer = new JsonFileWriter();
+        try {
+            writer.write(channel, channelJsonFileNameGenerator(channel.getName()));
         } catch (IOException e) {
             e.printStackTrace();
         }
