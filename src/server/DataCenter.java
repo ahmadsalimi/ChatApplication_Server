@@ -144,9 +144,9 @@ public class DataCenter {
             throw new BadRequestException("You are in another channel.");
         }
         Channel channel = new Channel(channelName);
+        channel.addMember(user);
         addChannel(channel);
         user.setCurrentChannel(channel);
-        channel.addMember(user);
     }
 
     public void joinChannel(String authToken, String channelName) {
