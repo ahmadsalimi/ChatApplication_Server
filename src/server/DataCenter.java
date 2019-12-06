@@ -166,8 +166,8 @@ public class DataCenter {
         if (user.getCurrentChannel() == null) {
             throw new BadRequestException("You aren't in any channel");
         }
-        List<String> messages = user.getCurrentChannel().getRefreshedMessages(user.getLastRefreshedIndex() + 1);
-        user.setLastRefreshedIndex(user.getCurrentChannel().getLastMessageIndex());
+        List<String> messages = user.getCurrentChannel().getRefreshedMessages(user.getRefreshIndex());
+        user.setRefreshIndex(user.getCurrentChannel().getMessagesCount());
         return messages;
     }
 

@@ -35,8 +35,8 @@ public class Channel {
         members.remove(user);
     }
 
-    public int getLastMessageIndex() {
-        return messages.size() - 1;
+    public int getMessagesCount() {
+        return messages.size();
     }
 
     public List<String> getRefreshedMessages(int from) {

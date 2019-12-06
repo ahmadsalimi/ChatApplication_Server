@@ -6,7 +6,7 @@ public class User {
     private final String password;
     private Channel currentChannel;
     private String authToken;
-    private int lastRefreshedIndex;
+    private int refreshIndex;
 
     public User(String username, String password) {
         this.username = username;
@@ -29,25 +29,25 @@ public class User {
         return authToken;
     }
 
-    public int getLastRefreshedIndex() {
-        return lastRefreshedIndex;
+    public int getRefreshIndex() {
+        return refreshIndex;
     }
 
     public void setCurrentChannel(Channel currentChannel) {
         this.currentChannel = currentChannel;
-        this.lastRefreshedIndex = 0;
+        this.refreshIndex = 0;
     }
 
     public void leaveChannel() {
         this.currentChannel = null;
-        this.lastRefreshedIndex = 0;
+        this.refreshIndex = 0;
     }
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
 
-    public void setLastRefreshedIndex(int lastRefreshedIndex) {
-        this.lastRefreshedIndex = lastRefreshedIndex;
+    public void setRefreshIndex(int refreshIndex) {
+        this.refreshIndex = refreshIndex;
     }
 }
