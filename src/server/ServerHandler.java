@@ -34,7 +34,7 @@ public class ServerHandler {
                 Socket socket = serverSocket.accept();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 Formatter writer = new Formatter(socket.getOutputStream());
-                String response = clientRequestHandler.getResponseJson(reader.readLine());
+                String response = clientRequestHandler.executeRequest(reader.readLine());
                 writer.format(response + "\n");
                 writer.flush();
             }

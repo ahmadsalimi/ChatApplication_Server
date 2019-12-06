@@ -20,7 +20,6 @@ public class ClientRequestHandler {
     private static final Pattern refreshPattern = Pattern.compile("refresh (\\w+)");
     private static final Pattern channelMembersPattern = Pattern.compile("channel members (\\w+)");
     private static final Pattern leavePattern = Pattern.compile("leave (\\w+)");
-    private final Gson gson = new Gson();
     private final DataCenter dataCenter;
     private final Logger logger;
 
@@ -29,7 +28,7 @@ public class ClientRequestHandler {
         this.logger = logger;
     }
 
-    String getResponseJson(String request) {
+    String executeRequest(String request) {
         Matcher requestMatcher;
         if ((requestMatcher = registerPattern.matcher(request)).find())
         {
@@ -70,6 +69,21 @@ public class ClientRequestHandler {
         return new Response<>(ResponseType.Error, "Unknown request pattern.").toJson();
     }
 
+    private String getRegisterResponse(Matcher request) {
+        User user = new User(request.group(1), request.group(2));
+        try {
+            dataCenter.registerUser(user);
+            return new Response<>(ResponseType.Successful, "").toJson();
+        } catch (IllegalArgumentException e) {
+            logger.log(LogLevel.Error, e.getMessage());
+            return new Response<>(ResponseType.Error, e.getMessage()).toJson();
+        }
+    }
+
+    private String getLoginResponse(Matcher requestMatcher) {
+        return null;
+    }
+
     private String getCreateChannelResponse(Matcher requestMatcher) {
         return null;
     }
@@ -95,21 +109,6 @@ public class ClientRequestHandler {
     }
 
     private String getLeaveResponse(Matcher requestMatcher) {
-        return null;
-    }
-
-    private String getRegisterResponse(Matcher request) {
-        User user = new User(request.group(1), request.group(2));
-        try {
-            dataCenter.registerUser(user);
-            return new Response<>(ResponseType.Successful, "").toJson();
-        } catch (IllegalArgumentException e) {
-            logger.log(LogLevel.Error, e.getMessage());
-            return new Response<>(ResponseType.Error, e.getMessage()).toJson();
-        }
-    }
-
-    private String getLoginResponse(Matcher requestMatcher) {
         return null;
     }
 }
