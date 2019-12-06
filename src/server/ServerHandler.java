@@ -43,6 +43,7 @@ public class ServerHandler {
                 writer.format(response + "\n");
                 writer.flush();
                 logger.log(LogLevel.Info, "Response sent: " + response);
+                socket.close();
             }
 
         } catch (Exception e) {
