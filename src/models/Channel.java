@@ -1,6 +1,9 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Channel {
     public static final Channel Empty = new Channel("empty");
@@ -38,5 +41,12 @@ public class Channel {
 
     public int getLastMessageIndex() {
         return messages.size() - 1;
+    }
+
+    public List<String> getRefreshedMessages(int from) {
+        if (messages.size() <= from) {
+            return messages.subList(from, messages.size()).stream().map(message -> message.getSender() + ": " + message.getContent()).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

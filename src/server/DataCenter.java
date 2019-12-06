@@ -45,6 +45,8 @@ public class DataCenter {
                 return Channel.Empty;
             }).forEach(this::addChannel);
         }
+
+        logger.log(LogLevel.Info, "Channels initialized from file successfully");
     }
 
     private void initUsers(JsonFileReader reader) {
@@ -61,9 +63,14 @@ public class DataCenter {
                 return User.Empty;
             }).forEach(this::registerUser);
         }
+
+        logger.log(LogLevel.Info, "Users initialized from file successfully");
     }
 
     public Channel getChannel(String name) {
+        if (!channelsByName.containsKey(name)) {
+            throw new BadRequestException("Channel not found.");
+        }
         return channelsByName.get(name);
     }
 
@@ -72,13 +79,20 @@ public class DataCenter {
             throw new BadRequestException("Channel name is not available.");
         }
         channelsByName.put(channel.getName(), channel);
+        logger.log(LogLevel.Info, "Channel " + channel.getName() + " successfully Created.");
     }
 
     public User getUserByUsername(String username) {
+        if (!channelsByName.containsKey(username)) {
+            throw new BadRequestException("Username is not valid.");
+        }
         return usersByUsername.get(username);
     }
 
     public User getUserByAuthToken(String authToken) {
+        if (onlineUsersByAuthToken.containsKey(authToken)) {
+            throw new BadRequestException("Authentication failed.");
+        }
         return onlineUsersByAuthToken.get(authToken);
     }
 
@@ -93,14 +107,17 @@ public class DataCenter {
     public void loginUser(User user) {
         user.setAuthToken(authTokenGenerator.generateNewToken());
         onlineUsersByAuthToken.put(user.getAuthToken(), user);
+        logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully logged in.");
     }
 
-    public boolean logoutUser(String authToken) {
-        if (!onlineUsersByAuthToken.containsKey(authToken)) {
-            onlineUsersByAuthToken.remove(authToken);
-            return true;
+    public void logoutUser(String authToken) {
+        if (onlineUsersByAuthToken.containsKey(authToken)) {
+            throw new BadRequestException("Authentication failed!");
         }
-        return false;
+        User user = onlineUsersByAuthToken.get(authToken);
+        user.setAuthToken(null);
+        onlineUsersByAuthToken.remove(authToken);
+        logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully logged out.");
     }
 
     public void authenticate(String authToken) {

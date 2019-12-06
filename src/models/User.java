@@ -42,7 +42,7 @@ public class User {
         this.authToken = authToken;
     }
 
-    public void increaseLastRefreshedIndex() {
-        this.lastRefreshedIndex++;
+    public void setLastRefreshedIndex(int lastRefreshedIndex) {
+        this.lastRefreshedIndex = lastRefreshedIndex;
     }
 }

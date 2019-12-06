@@ -1,11 +1,10 @@
 package server;
 
 import exception.BadRequestException;
-import logger.LogLevel;
 import logger.Logger;
 import models.*;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,7 +67,6 @@ public class ClientRequestHandler {
             }
             return new Response<>(ResponseType.Error, "Unknown request pattern.").toJson();
         } catch (BadRequestException e) {
-            logger.log(LogLevel.Error, e.getMessage());
             return new Response<>(ResponseType.Error, e.getMessage()).toJson();
         }
     }
@@ -81,9 +79,6 @@ public class ClientRequestHandler {
 
     private Response<String> login(Matcher requestMatcher) {
         User user = dataCenter.getUserByUsername(requestMatcher.group(1));
-        if (user == null) {
-            throw new BadRequestException("Username is not valid.");
-        }
         dataCenter.authenticateLogin(user, requestMatcher.group(2));
         dataCenter.loginUser(user);
         return new Response<>(ResponseType.AuthToken, user.getAuthToken());
@@ -100,22 +95,46 @@ public class ClientRequestHandler {
     }
 
     private Response<String> joinChannel(Matcher requestMatcher) {
-        return null;
+        dataCenter.authenticate(requestMatcher.group(2));
+        Channel channel = dataCenter.getChannel(requestMatcher.group(1));
+        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
+        if (user.getCurrentChannel() != null) {
+            throw new BadRequestException("You are in another channel.");
+        }
+        channel.addMember(user);
+        user.setCurrentChannel(channel);
+        return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<String> logout(Matcher requestMatcher) {
-        return null;
+        dataCenter.authenticate(requestMatcher.group(1));
+        dataCenter.logoutUser(requestMatcher.group(1));
+        return new Response<>(ResponseType.Successful, "");
     }
 
     private Response<String> sendMessage(Matcher requestMatcher) {
-        return null;
+        dataCenter.authenticate(requestMatcher.group(2));
+        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
+        if (user.getCurrentChannel() == null) {
+            throw new BadRequestException("You aren't in any channel");
+        }
+        Message message = new Message(user, requestMatcher.group(1));
+        user.getCurrentChannel().addMessage(message);
+        return new Response<>(ResponseType.Successful, "");
     }
 
-    private Response<ArrayList<String>> refresh(Matcher requestMatcher) {
-        return null;
+    private Response<List<String>> refresh(Matcher requestMatcher) {
+        dataCenter.authenticate(requestMatcher.group(1));
+        User user = dataCenter.getUserByAuthToken(requestMatcher.group(2));
+        if (user.getCurrentChannel() == null) {
+            throw new BadRequestException("You aren't in any channel");
+        }
+        List<String> messages = user.getCurrentChannel().getRefreshedMessages(user.getLastRefreshedIndex() + 1);
+        user.setLastRefreshedIndex(user.getCurrentChannel().getLastMessageIndex());
+        return new Response<>(ResponseType.List, messages);
     }
 
-    private Response<ArrayList<String>> channelMembers(Matcher requestMatcher) {
+    private Response<List<String>> channelMembers(Matcher requestMatcher) {
         return null;
     }
 
