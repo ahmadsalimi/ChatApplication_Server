@@ -98,8 +98,8 @@ public class ClientRequestHandler {
         return new Response<>(ResponseType.Successful, "");
     }
 
-    private Response<List<String>> refresh(Matcher requestMatcher) {
-        List<String> messages = dataCenter.refresh(requestMatcher.group(1));
+    private Response<List<Message>> refresh(Matcher requestMatcher) {
+        List<Message> messages = dataCenter.refresh(requestMatcher.group(1));
         return new Response<>(ResponseType.List, messages);
     }
 
