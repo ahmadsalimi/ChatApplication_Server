@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DataCenter {
     private final AuthTokenGenerator authTokenGenerator = new AuthTokenGenerator();
@@ -34,6 +33,9 @@ public class DataCenter {
 
     private void initChannels(JsonFileReader reader) {
         File channelsDirectory = new File(Config.getInstance().getChannelsPath());
+        if (!channelsDirectory.exists()) {
+            channelsDirectory.mkdirs();
+        }
         File[] channelsFiles = channelsDirectory.listFiles();
 
         if (channelsFiles != null) {
@@ -52,6 +54,9 @@ public class DataCenter {
 
     private void initUsers(JsonFileReader reader) {
         File usersDirectory = new File(Config.getInstance().getUsersPath());
+        if (!usersDirectory.exists()) {
+            usersDirectory.mkdirs();
+        }
         File[] usersFiles = usersDirectory.listFiles();
 
         if (usersFiles != null) {
@@ -200,7 +205,7 @@ public class DataCenter {
         try {
             writer.write(user, userJsonFileNameGenerator(user.getUsername()));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(LogLevel.Error, e.getMessage());
         }
     }
 
@@ -210,7 +215,7 @@ public class DataCenter {
         try {
             writer.write(channel, channelJsonFileNameGenerator(channel.getName()));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(LogLevel.Error, e.getMessage());
         }
     }
 
