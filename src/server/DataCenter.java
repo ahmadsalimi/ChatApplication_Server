@@ -7,9 +7,7 @@ import logger.LogLevel;
 import logger.Logger;
 import models.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +41,7 @@ public class DataCenter {
                 try {
                     return reader.read(file, Channel.class);
                 } catch (FileNotFoundException e) {
-                    logger.log(LogLevel.Error, e.getMessage());
+                    handleError(e);
                 }
                 return Channel.Empty;
             }).forEach(this::addChannel);
@@ -64,7 +62,7 @@ public class DataCenter {
                 try {
                     return reader.read(file, User.class);
                 } catch (FileNotFoundException e) {
-                    logger.log(LogLevel.Error, e.getMessage());
+                    handleError(e);
                 }
                 return User.Empty;
             }).forEach(this::registerUser);
@@ -209,8 +207,8 @@ public class DataCenter {
         }
         sendServerMessage(user.getCurrentChannel(), user.getUsername() + " leaved the channel.");
         user.getCurrentChannel().removeMember(user.getUsername());
-        user.leaveChannel();
         saveChannelToDatabase(user.getCurrentChannel());
+        user.leaveChannel();
     }
 
     private void saveUserToDatabase(User user) {
@@ -218,7 +216,7 @@ public class DataCenter {
         try {
             writer.write(user, generateUserFilePath(user.getUsername()));
         } catch (IOException e) {
-            logger.log(LogLevel.Error, e.getMessage());
+            handleError(e);
         }
     }
 
@@ -227,8 +225,15 @@ public class DataCenter {
         try {
             writer.write(channel, generateChannelFilePath(channel.getName()));
         } catch (IOException e) {
-            logger.log(LogLevel.Error, e.getMessage());
+            handleError(e);
         }
+    }
+
+    private <T extends Exception> void handleError(T e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        logger.log(LogLevel.Error, sw.toString());
     }
 
     private String generateUserFilePath(String username) {

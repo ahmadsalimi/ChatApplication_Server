@@ -10,10 +10,10 @@ import java.util.List;
 public class Channel {
     public static final Channel Empty = new Channel("empty");
     @Expose
-    private final ArrayList<Message> messages = new ArrayList<>();
+    private ArrayList<Message> messages = new ArrayList<>();
     @Expose
-    private final String name;
-    private final HashSet<String> members = new HashSet<>();
+    private String name;
+    private HashSet<String> members = new HashSet<>();
 
     public Channel(String name) {
         this.name = name;
@@ -24,6 +24,9 @@ public class Channel {
     }
 
     public void addMember(String member) {
+        if (members == null) {
+            members = new HashSet<>();
+        }
         members.add(member);
     }
 

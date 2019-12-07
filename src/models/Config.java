@@ -8,10 +8,11 @@ import java.io.FileNotFoundException;
 public class Config {
     private static final String configPath = "configurations.json";
     private static Config Instance;
-    private int port;
-    private final LogLevel minLogLevel = LogLevel.Info;
-    private String usersPath;
-    private String channelsPath;
+    private int port = 12345;
+    private LogLevel minLogLevel = LogLevel.Info;
+    private String usersPath = "Resources/Users/";
+    private String channelsPath = "Resources/Channels/";
+    private int socketTimeout = 1000;
 
     private Config() {
     }
@@ -42,5 +43,9 @@ public class Config {
 
     public String getChannelsPath() {
         return channelsPath;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
     }
 }
