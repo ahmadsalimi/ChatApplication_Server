@@ -151,6 +151,7 @@ public class DataCenter {
         channel.addMember(user.getUsername());
         addChannel(channel);
         user.setCurrentChannel(channel);
+        saveChannelToDatabase(channel);
     }
 
     public void joinChannel(String authToken, String channelName) {
@@ -161,6 +162,7 @@ public class DataCenter {
         Channel channel = getChannelByName(channelName);
         channel.addMember(user.getUsername());
         user.setCurrentChannel(channel);
+        saveChannelToDatabase(channel);
     }
 
     public void sendMessage(String authToken, String content) {
@@ -198,12 +200,13 @@ public class DataCenter {
         }
         user.getCurrentChannel().removeMember(user.getUsername());
         user.leaveChannel();
+        saveChannelToDatabase(user.getCurrentChannel());
     }
 
     private void saveUserToDatabase(User user) {
         JsonFileWriter writer = new JsonFileWriter();
         try {
-            writer.write(user, userJsonFileNameGenerator(user.getUsername()));
+            writer.write(user, generateUserFilePath(user.getUsername()));
         } catch (IOException e) {
             logger.log(LogLevel.Error, e.getMessage());
         }
@@ -212,17 +215,17 @@ public class DataCenter {
     private void saveChannelToDatabase(Channel channel) {
         JsonFileWriter writer = new JsonFileWriter();
         try {
-            writer.write(channel, channelJsonFileNameGenerator(channel.getName()));
+            writer.write(channel, generateChannelFilePath(channel.getName()));
         } catch (IOException e) {
             logger.log(LogLevel.Error, e.getMessage());
         }
     }
 
-    private String userJsonFileNameGenerator(String username) {
-        return Config.getInstance().getUsersPath() + "user." + username + ".json";
+    private String generateUserFilePath(String username) {
+        return Config.getInstance().getUsersPath() + username + ".user.json";
     }
 
-    private String channelJsonFileNameGenerator(String channelName) {
-        return Config.getInstance().getChannelsPath() + "channel." + channelName + ".json";
+    private String generateChannelFilePath(String channelName) {
+        return Config.getInstance().getChannelsPath() + channelName + ".channel.json";
     }
 }
