@@ -1,6 +1,6 @@
 {
   "port": 12345,
   "minLogLevel": "Info",
-  "usersPath": "",
-  "channelsPath": ""
+  "usersPath": "Resources/Users/",
+  "channelsPath": "Resources/Channels/"
 }

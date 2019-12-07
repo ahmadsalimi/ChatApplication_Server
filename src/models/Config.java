@@ -8,10 +8,10 @@ import java.io.FileNotFoundException;
 public class Config {
     private static final String configPath = "configurations.json";
     private static Config Instance;
-    private final int port = 12345;
+    private int port;
     private final LogLevel minLogLevel = LogLevel.Info;
-    private final String usersPath = "";
-    private final String channelsPath = "";
+    private String usersPath;
+    private String channelsPath;
 
     private Config() {
     }

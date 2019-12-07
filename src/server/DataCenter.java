@@ -2,12 +2,14 @@ package server;
 
 import exception.BadRequestException;
 import json.JsonFileReader;
+import json.JsonFileWriter;
 import logger.LogLevel;
 import logger.Logger;
 import models.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -102,6 +104,7 @@ public class DataCenter {
         if (channelsByName.containsKey(channel.getName())) {
             throw new BadRequestException("Channel name is not available.");
         }
+        saveChannelToDatabase(channel);
         channelsByName.put(channel.getName(), channel);
         logger.log(LogLevel.Info, "Channel " + channel.getName() + " successfully Created.");
     }
@@ -110,6 +113,7 @@ public class DataCenter {
         if (usersByUsername.containsKey(user.getUsername())) {
             throw new BadRequestException("this username is not available.");
         }
+        saveUserToDatabase(user);
         usersByUsername.put(user.getUsername(), user);
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully registered.");
     }
@@ -140,9 +144,9 @@ public class DataCenter {
             throw new BadRequestException("You are in another channel.");
         }
         Channel channel = new Channel(channelName);
+        channel.addMember(user);
         addChannel(channel);
         user.setCurrentChannel(channel);
-        channel.addMember(user);
     }
 
     public void joinChannel(String authToken, String channelName) {
@@ -189,5 +193,32 @@ public class DataCenter {
         }
         user.getCurrentChannel().removeMember(user);
         user.leaveChannel();
+    }
+
+    private void saveUserToDatabase(User user) {
+        JsonFileWriter writer = new JsonFileWriter();
+        try {
+            writer.write(user, userJsonFileNameGenerator(user.getUsername()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void saveChannelToDatabase(Channel channel) {
+        JsonFileWriter writer = new JsonFileWriter();
+        try {
+            writer.write(channel, channelJsonFileNameGenerator(channel.getName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String userJsonFileNameGenerator(String username) {
+        return Config.getInstance().getUsersPath() + "user." + username + ".json";
+    }
+
+    private String channelJsonFileNameGenerator(String channelName) {
+        return Config.getInstance().getChannelsPath() + "channel." + channelName + ".json";
     }
 }
