@@ -153,6 +153,7 @@ public class DataCenter {
         addChannel(channel);
         user.setCurrentChannel(channel);
         saveChannelToDatabase(channel);
+        sendServerMessage(channel, user.getUsername() + " created " + channelName + ".");
     }
 
     public void joinChannel(String authToken, String channelName) {
