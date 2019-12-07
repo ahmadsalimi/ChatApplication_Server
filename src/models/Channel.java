@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Channel {
     public static final Channel Empty = new Channel("empty");
     private final ArrayList<Message> messages = new ArrayList<>();
     private final String name;
-    private final HashSet<User> members = new HashSet<>();
+    private final HashSet<String> members = new HashSet<>();
 
     public Channel(String name) {
         this.name = name;
@@ -20,7 +19,7 @@ public class Channel {
         messages.add(message);
     }
 
-    public void addMember(User member) {
+    public void addMember(String member) {
         members.add(member);
     }
 
@@ -29,11 +28,11 @@ public class Channel {
     }
 
     public List<String> getMembersList() {
-        return members.stream().map(User::getUsername).collect(Collectors.toList());
+        return new ArrayList<>(members);
     }
 
-    public void removeMember(User user) {
-        members.remove(user);
+    public void removeMember(String username) {
+        members.remove(username);
     }
 
     public int getMessagesCount() {

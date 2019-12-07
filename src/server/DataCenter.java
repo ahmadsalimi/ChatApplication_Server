@@ -109,7 +109,6 @@ public class DataCenter {
         if (channelsByName.containsKey(channel.getName())) {
             throw new BadRequestException("Channel name is not available.");
         }
-        saveChannelToDatabase(channel);
         channelsByName.put(channel.getName(), channel);
         logger.log(LogLevel.Info, "Channel " + channel.getName() + " successfully Created.");
     }
@@ -149,7 +148,7 @@ public class DataCenter {
             throw new BadRequestException("You are in another channel.");
         }
         Channel channel = new Channel(channelName);
-        channel.addMember(user);
+        channel.addMember(user.getUsername());
         addChannel(channel);
         user.setCurrentChannel(channel);
     }
@@ -160,7 +159,7 @@ public class DataCenter {
             throw new BadRequestException("You are in another channel.");
         }
         Channel channel = getChannelByName(channelName);
-        channel.addMember(user);
+        channel.addMember(user.getUsername());
         user.setCurrentChannel(channel);
     }
 
@@ -171,6 +170,7 @@ public class DataCenter {
         }
         Message message = new Message(user.getUsername(), content);
         user.getCurrentChannel().addMessage(message);
+        saveChannelToDatabase(user.getCurrentChannel());
     }
 
     public List<Message> refresh(String authToken) {
@@ -196,7 +196,7 @@ public class DataCenter {
         if (user.getCurrentChannel() == null) {
             throw new BadRequestException("You aren't in any channel");
         }
-        user.getCurrentChannel().removeMember(user);
+        user.getCurrentChannel().removeMember(user.getUsername());
         user.leaveChannel();
     }
 
@@ -208,7 +208,6 @@ public class DataCenter {
             logger.log(LogLevel.Error, e.getMessage());
         }
     }
-
 
     private void saveChannelToDatabase(Channel channel) {
         JsonFileWriter writer = new JsonFileWriter();
