@@ -137,6 +137,9 @@ public class DataCenter {
 
     public void logoutUser(String authToken) {
         User user = authenticate(authToken);
+        if (user.getCurrentChannel() != null) {
+            leaveChannel(authToken);
+        }
         user.setAuthToken(null);
         onlineUsersByAuthToken.remove(authToken);
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully logged out.");
@@ -162,6 +165,12 @@ public class DataCenter {
         Channel channel = getChannelByName(channelName);
         channel.addMember(user.getUsername());
         user.setCurrentChannel(channel);
+        sendServerMessage(channel, user.getUsername() + " joined.");
+    }
+
+    private void sendServerMessage(Channel channel, String content) {
+        Message message = new Message("server", content);
+        channel.addMessage(message);
         saveChannelToDatabase(channel);
     }
 
@@ -198,6 +207,7 @@ public class DataCenter {
         if (user.getCurrentChannel() == null) {
             throw new BadRequestException("You aren't in any channel");
         }
+        sendServerMessage(user.getCurrentChannel(), user.getUsername() + " leaved the channel.");
         user.getCurrentChannel().removeMember(user.getUsername());
         user.leaveChannel();
         saveChannelToDatabase(user.getCurrentChannel());

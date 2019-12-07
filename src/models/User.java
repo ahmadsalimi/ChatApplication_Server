@@ -1,8 +1,12 @@
 package models;
 
+import com.google.gson.annotations.Expose;
+
 public class User {
     public static final User Empty = new User("empty", "empty");
+    @Expose
     private final String username;
+    @Expose
     private final String password;
     private Channel currentChannel;
     private String authToken;

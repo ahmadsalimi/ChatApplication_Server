@@ -1,5 +1,7 @@
 package models;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,7 +9,9 @@ import java.util.List;
 
 public class Channel {
     public static final Channel Empty = new Channel("empty");
+    @Expose
     private final ArrayList<Message> messages = new ArrayList<>();
+    @Expose
     private final String name;
     private final HashSet<String> members = new HashSet<>();
 
