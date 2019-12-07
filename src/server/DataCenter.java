@@ -117,7 +117,6 @@ public class DataCenter {
         if (usersByUsername.containsKey(user.getUsername())) {
             throw new BadRequestException("this username is not available.");
         }
-        saveUserToDatabase(user);
         usersByUsername.put(user.getUsername(), user);
         logger.log(LogLevel.Info, "User " + user.getUsername() + " successfully registered.");
     }
@@ -125,6 +124,7 @@ public class DataCenter {
     public void registerUser(String username, String password) {
         User user = new User(username, password);
         registerUser(user);
+        saveUserToDatabase(user);
     }
 
     public String loginUser(String username, String password) {
