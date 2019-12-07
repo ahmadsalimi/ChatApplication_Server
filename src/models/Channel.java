@@ -40,10 +40,10 @@ public class Channel {
         return messages.size();
     }
 
-    public List<String> getRefreshedMessages(int from) {
+    public List<Message> getRefreshedMessages(int from) {
         if (messages.size() <= from) {
             return Collections.emptyList();
         }
-        return messages.subList(from, messages.size()).stream().map(message -> message.getSender().getUsername() + ": " + message.getContent()).collect(Collectors.toList());
+        return messages.subList(from, messages.size());
     }
 }

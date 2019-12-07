@@ -160,16 +160,16 @@ public class DataCenter {
         if (user.getCurrentChannel() == null) {
             throw new BadRequestException("You aren't in any channel");
         }
-        Message message = new Message(user, content);
+        Message message = new Message(user.getUsername(), content);
         user.getCurrentChannel().addMessage(message);
     }
 
-    public List<String> refresh(String authToken) {
+    public List<Message> refresh(String authToken) {
         User user = authenticate(authToken);
         if (user.getCurrentChannel() == null) {
             throw new BadRequestException("You aren't in any channel");
         }
-        List<String> messages = user.getCurrentChannel().getRefreshedMessages(user.getRefreshIndex());
+        List<Message> messages = user.getCurrentChannel().getRefreshedMessages(user.getRefreshIndex());
         user.setRefreshIndex(user.getCurrentChannel().getMessagesCount());
         return messages;
     }
