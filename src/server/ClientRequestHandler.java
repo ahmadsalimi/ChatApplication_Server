@@ -8,8 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClientRequestHandler {
-    private static final Pattern registerPattern = Pattern.compile("^register\\s+(\\w+)\\s*,\\s*(\\w+)$");
-    private static final Pattern loginPattern = Pattern.compile("^login\\s+(\\w+)\\s*,\\s*(\\w+)$");
+    private static final Pattern registerPattern = Pattern.compile("^register\\s+(\\S+)\\s*,\\s*(\\S+)$");
+    private static final Pattern loginPattern = Pattern.compile("^login\\s+(\\S+)\\s*,\\s*(\\S+)$");
     private static final Pattern createChannelPattern = Pattern.compile("^create\\s+channel\\s+(\\w+)\\s*,\\s*(.+)$");
     private static final Pattern joinChannelPattern = Pattern.compile("^join\\s+channel\\s+(\\w+)\\s*,\\s*(.+)$");
     private static final Pattern logoutPattern = Pattern.compile("^logout\\s+(.+)$");
