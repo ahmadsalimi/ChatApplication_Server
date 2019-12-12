@@ -6,7 +6,7 @@ import logger.LogLevel;
 import java.io.FileNotFoundException;
 
 public class Config {
-    private static final String configPath = "configurations.json";
+    private static final String configPath = "configuration.json";
     private static Config Instance;
     private int port = 12345;
     private LogLevel minLogLevel = LogLevel.Info;
