@@ -12,7 +12,7 @@ public class Config {
     private LogLevel minLogLevel = LogLevel.Info;
     private String usersPath = "Resources/Users/";
     private String channelsPath = "Resources/Channels/";
-    private int socketTimeout = 1000;
+    private int socketTimeout;
 
     private Config() {
     }
